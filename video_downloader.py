@@ -39,6 +39,11 @@ def ensure_yt_dlp():
     except ImportError:
         pass
 
+    if getattr(sys, 'frozen', False):
+        raise RuntimeError(
+            "yt-dlp is missing! When running as a compiled .exe, yt-dlp must be included at build time."
+        )
+
     print("yt-dlp not found - installing (first run only)...")
     cmds = [
         [sys.executable, "-m", "pip", "install", "--user", "--upgrade", "yt-dlp"],
@@ -63,6 +68,42 @@ def ensure_yt_dlp():
 def ffmpeg_available():
     """ffmpeg is needed to merge HD streams and to create MP3s."""
     return shutil.which("ffmpeg") is not None
+
+
+def ensure_ffmpeg():
+    if ffmpeg_available():
+        return
+    if sys.platform.startswith("win"):
+        import tkinter as tk
+        from tkinter import messagebox
+        
+        # Create a temporary hidden window for the messagebox
+        temp_root = tk.Tk()
+        temp_root.withdraw()
+        
+        messagebox.showinfo(
+            "Configuração Inicial",
+            "Parece ser a sua primeira vez usando o aplicativo!\n\n"
+            "O sistema agora vai baixar e instalar o 'FFmpeg' (um componente obrigatório para juntar vídeos em Alta Resolução).\n\n"
+            "Aguarde o download no terminal. O aplicativo será fechado automaticamente quando terminar, e então você deve abri-lo novamente!"
+        )
+        
+        print("ffmpeg not found. Attempting to install via winget...")
+        try:
+            subprocess.run(
+                ["winget", "install", "ffmpeg", "--accept-package-agreements", "--accept-source-agreements"],
+                shell=True,
+                check=False
+            )
+            messagebox.showinfo(
+                "Instalação Concluída", 
+                "O FFmpeg foi instalado com sucesso!\n\nPor favor, abra o aplicativo novamente para começar a baixar seus vídeos."
+            )
+        except Exception as e:
+            print(f"Failed to auto-install ffmpeg: {e}")
+            messagebox.showerror("Erro", f"Falha ao tentar instalar o ffmpeg automaticamente: {e}")
+        finally:
+            sys.exit(0)
 
 
 # --------------------------------------------------------------------------- #
@@ -393,6 +434,7 @@ class VideoDownloaderApp:
 def main():
     try:
         yt_dlp_module = ensure_yt_dlp()
+        ensure_ffmpeg()
     except RuntimeError as e:
         root = tk.Tk()
         root.withdraw()
@@ -409,4 +451,6 @@ def main():
 
 
 if __name__ == "__main__":
+    import multiprocessing
+    multiprocessing.freeze_support()
     main()
