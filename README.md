@@ -10,7 +10,7 @@ Um aplicativo simples para desktop (feito com Tkinter) que baixa vídeos do **Yo
 
 ### Como rodar o app
 
-Para iniciar o aplicativo, basta dar um duplo clique no arquivo **`iniciar_app.bat`**. 
+Para iniciar o aplicativo, basta dar um duplo clique no arquivo **`.bat`**. 
 Ele é um arquivo dinâmico que detecta a pasta atual e abre o aplicativo automaticamente, independentemente do computador em que você esteja ou de onde a pasta foi salva.
 
 Se preferir rodar manualmente pelo terminal, use:
@@ -58,7 +58,7 @@ A simple desktop application (built with Tkinter) that downloads videos from **Y
 
 ### How to run the app
 
-To start the application, just double-click the **`iniciar_app.bat`** file.
+To start the application, just double-click the **`.bat`** file.
 It is a dynamic file that detects the current folder and automatically opens the application, regardless of the computer you are on or where the folder is saved.
 
 If you prefer to run it manually via the terminal, use:
