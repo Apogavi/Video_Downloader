@@ -8,21 +8,23 @@
 
 Um aplicativo simples para desktop (feito com Tkinter) que baixa vídeos do **YouTube, Reddit, X (Twitter), Instagram, TikTok** e cerca de 1000 outros sites. Nunca mais precise procurar um site para baixar vídeos!
 
+### Pré-requisitos (Obrigatórios)
+
+Para rodar este aplicativo, é **necessário** ter os seguintes itens na sua máquina:
+1. **Python** instalado (lembre-se de marcar a opção "Add to PATH" na instalação).
+2. A biblioteca **`yt-dlp`**.
+3. A ferramenta **FFmpeg** (necessária para juntar vídeos em HD e converter MP3).
+
+*(Nota: Na primeira vez que você rodar o aplicativo no Windows, o próprio código tentará baixar automaticamente a biblioteca `yt-dlp` via pip e o `ffmpeg` via comando winget!)*
+
 ### Como rodar o app
 
-Para iniciar o aplicativo, basta dar um duplo clique no arquivo **`.bat`**. 
-Ele é um arquivo dinâmico que detecta a pasta atual e abre o aplicativo automaticamente, independentemente do computador em que você esteja ou de onde a pasta foi salva.
+Para iniciar o aplicativo, basta dar um duplo clique no arquivo **`iniciar_app.bat`**. Ele detecta a pasta atual e abre o app de forma automática.
 
 Se preferir rodar manualmente pelo terminal, use:
 ```bash
 python video_downloader.py
 ```
-*(Na primeira vez que você rodar, ele instalará automaticamente o `yt-dlp`, que é o motor de downloads. Não é preciso fazer mais nada.)*
-
-### ffmpeg (recomendado)
-O `yt-dlp` precisa do **ffmpeg** para juntar vídeos e áudios em alta resolução (HD) e para converter em MP3.
-- **Windows:** Abra o prompt/powershell e rode `winget install ffmpeg` (ou baixe no site oficial e adicione ao PATH).
-Sem o ffmpeg, o aplicativo ainda funciona, mas a qualidade máxima e a conversão de MP3 podem ficar limitadas.
 
 ### Uso de Cookies (Para vídeos restritos)
 
@@ -56,21 +58,23 @@ Este aplicativo foi desenvolvido com o auxílio de **Inteligência Artificial**.
 
 A simple desktop application (built with Tkinter) that downloads videos from **YouTube, Reddit, X (Twitter), Instagram, TikTok**, and around 1000 other sites. Never search for a video downloader site again!
 
+### Requirements (Mandatory)
+
+To run this application, it is **required** to have the following installed on your machine:
+1. **Python** (remember to check the "Add to PATH" option during installation).
+2. The **`yt-dlp`** library.
+3. The **FFmpeg** tool (required to merge HD videos and convert to MP3).
+
+*(Note: The first time you run the application on Windows, the code itself will try to automatically download the `yt-dlp` library via pip and `ffmpeg` via the winget command!)*
+
 ### How to run the app
 
-To start the application, just double-click the **`.bat`** file.
-It is a dynamic file that detects the current folder and automatically opens the application, regardless of the computer you are on or where the folder is saved.
+To start the application, just double-click the **`iniciar_app.bat`** file. It detects the current folder and automatically opens the app.
 
 If you prefer to run it manually via the terminal, use:
 ```bash
 python video_downloader.py
 ```
-*(The first time you run it, it will automatically install `yt-dlp`, which is the download engine. You don't need to do anything else.)*
-
-### ffmpeg (recommended)
-`yt-dlp` requires **ffmpeg** to merge high-resolution (HD) video and audio, and to convert to MP3.
-- **Windows:** Open the prompt/powershell and run `winget install ffmpeg` (or download it from the official site and add it to your PATH).
-Without ffmpeg, the app will still work, but maximum quality and MP3 conversion may be limited.
 
 ### Use of Cookies (For restricted videos)
 
