@@ -350,7 +350,8 @@ class VideoDownloaderApp:
             elif d["status"] == "finished":
                 self.ui_queue.put(("progress", job["id"], "Processing...", 100))
 
-        outtmpl = os.path.join(job["outdir"], "%(title)s.%(ext)s")
+        # We use a custom 'unique_title' field that we will inject into the info dictionary
+        outtmpl = os.path.join(job["outdir"], "%(unique_title)s.%(ext)s")
         ydl_opts = {
             "outtmpl": outtmpl,
             "format": job["fmt"],
@@ -359,11 +360,13 @@ class VideoDownloaderApp:
             "quiet": True,
             "no_warnings": True,
         }
+        
         # Automatically use reddit_cookies.txt in the same folder if downloading from Reddit.
         if "reddit.com" in job["url"].lower():
             cookie_path = os.path.join(APP_DIR, "reddit_cookies.txt")
             if os.path.exists(cookie_path):
                 ydl_opts["cookiefile"] = cookie_path
+                
         if job["audio_only"]:
             ydl_opts["postprocessors"] = [{
                 "key": "FFmpegExtractAudio",
@@ -376,10 +379,46 @@ class VideoDownloaderApp:
         title = job["url"]
         try:
             with self.yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                info = ydl.extract_info(job["url"], download=True)
-                title = info.get("title", job["url"]) if info else job["url"]
+                self.ui_queue.put(("status", job["id"], "Extracting info...", None))
+                # Fetch video info without downloading first
+                info = ydl.extract_info(job["url"], download=False)
+                if not info:
+                    raise RuntimeError("Failed to extract video info.")
+                
+                # In case a playlist URL bypassed noplaylist
+                if "entries" in info:
+                    entries = list(info["entries"])
+                    if entries:
+                        info = entries[0]
+                    else:
+                        raise RuntimeError("Playlist is empty.")
+
+                title = info.get("title", job["url"])
+                
+                # Sanitize title: replace dots, slashes, and other invalid characters
+                import re
+                safe_title = re.sub(r'[\\/*?:"<>|]', "_", title)
+                safe_title = safe_title.replace(".", "_")
+                
+                # Determine final target extension to check for existing files
+                target_ext = "mp3" if job["audio_only"] else "mp4"
+                
+                # Find a unique filename by appending _1, _2, etc.
+                final_title = safe_title
+                counter = 1
+                while os.path.exists(os.path.join(job["outdir"], f"{final_title}.{target_ext}")):
+                    final_title = f"{safe_title}_{counter}"
+                    counter += 1
+                
+                # Inject the safe, unique title into the yt-dlp info dictionary
+                info["unique_title"] = final_title
+                
+                # Process and download the video using the customized info dictionary
+                ydl.process_ie_result(info, download=True)
+                
             self.ui_queue.put(("done", job["id"], "Done", title))
             self._record_history(job, title, "Done")
+            
         except Exception as e:  # noqa: BLE001
             raw = str(e)
             msg = raw.splitlines()[0][:120]
